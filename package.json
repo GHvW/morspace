@@ -1,0 +1,10 @@
+{
+  "scripts": {
+    "serve": "npx parcel index.html"
+  },
+  "devDependencies": {
+    "@parcel/transformer-elm": "^2.9.3",
+    "elm": "^0.19.1-5",
+    "parcel": "^2.9.3"
+  }
+}
