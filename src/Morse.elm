@@ -38,12 +38,12 @@ whitespaceToText =
 fromText : (Char -> String) -> (String -> String)
 fromText convert =
     let
-        wordsToMorse : String -> String
-        wordsToMorse =
+        wordToMorse : String -> String
+        wordToMorse =
             String.toList >> List.map convert >> String.join " "
     in
     String.words
-        >> List.map wordsToMorse
+        >> List.map wordToMorse
         >> String.join "\t"
 
 
@@ -55,10 +55,3 @@ codeFromText =
 whitespaceFromText : String -> String
 whitespaceFromText =
     fromText (Alphabet.alphaToMorse >> Maybe.withDefault "_")
-
-
-
--- decodeWhitespace : String -> String
---     whitespaceToText >> String.fromList
--- decodeMorse : String -> String
---     codeToText >>
