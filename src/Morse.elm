@@ -6,24 +6,35 @@ import Alphabet exposing (..)
 type alias MorseInfo =
     { wordSeparator : String
     , letterSeparator : String
-
-    -- , morseToAlpha : String -> Char
     }
+
+
+whitespaceInfo : MorseInfo
+whitespaceInfo =
+    { wordSeparator = "\t\t\t\t\t\t\t", letterSeparator = "\t\t\t" }
+
+
+morseCodeInfo : MorseInfo
+morseCodeInfo =
+    -- wordSeparator is 3 spaces
+    { wordSeparator = "\t", letterSeparator = " " }
 
 
 toText : ( MorseInfo, String -> Char ) -> (String -> String)
 toText ( morseInfo, morseToAlpha ) =
+    let
+        convertWord =
+            String.split morseInfo.letterSeparator >> List.map morseToAlpha >> String.fromList
+    in
     String.split morseInfo.wordSeparator
-        >> List.map (String.split morseInfo.letterSeparator >> List.map morseToAlpha >> String.fromList)
+        >> List.map convertWord
         >> String.join " "
 
 
 codeToText : String -> String
 codeToText =
     toText
-        ( { wordSeparator = "\t"
-          , letterSeparator = " "
-          }
+        ( morseCodeInfo
         , Alphabet.morseToAlpha >> Maybe.withDefault '_'
         )
 
@@ -31,9 +42,7 @@ codeToText =
 whitespaceToText : String -> String
 whitespaceToText =
     toText
-        ( { wordSeparator = "\t\t\t\t\t\t\t"
-          , letterSeparator = "\t\t\t"
-          }
+        ( whitespaceInfo
         , Alphabet.whitespaceToAlpha >> Maybe.withDefault '_'
         )
 
@@ -53,7 +62,7 @@ fromText ( morseInfo, convert ) =
 codeFromText : String -> String
 codeFromText =
     fromText
-        ( { wordSeparator = "\t", letterSeparator = " " }
+        ( morseCodeInfo
         , Alphabet.alphaToMorse >> Maybe.withDefault "_"
         )
 
@@ -61,6 +70,6 @@ codeFromText =
 whitespaceFromText : String -> String
 whitespaceFromText =
     fromText
-        ( { wordSeparator = "\t\t\t\t\t\t\t", letterSeparator = "\t\t\t" }
+        ( whitespaceInfo
         , Alphabet.alphaToWhitespace >> Maybe.withDefault "_"
         )

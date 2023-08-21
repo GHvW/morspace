@@ -1,8 +1,10 @@
 module Main exposing (..)
 
 import Browser
-import Html exposing (Html, button, div, text)
-import Html.Events exposing (onClick)
+import Html exposing (Html, button, div, p, text, textarea)
+import Html.Attributes exposing (class, classList, disabled)
+import Html.Events exposing (onClick, onInput)
+import Morse
 
 
 main : Program () Model Msg
@@ -10,34 +12,70 @@ main =
     Browser.sandbox { init = init, update = update, view = view }
 
 
+type MorseOperation
+    = Decode
+    | Encode
+
+
 type alias Model =
-    Int
+    { operation : MorseOperation
+    , text : String
+    }
 
 
 init : Model
 init =
-    0
+    { operation = Encode, text = "" }
 
 
 type Msg
-    = Increment
-    | Decrement
+    = ToggleOperation MorseOperation
+    | UpdateText String
 
 
 update : Msg -> Model -> Model
 update msg model =
     case msg of
-        Increment ->
-            model + 1
+        ToggleOperation op ->
+            { model | operation = op }
 
-        Decrement ->
-            model - 1
+        UpdateText it ->
+            { model | text = it }
+
+
+isEncode : MorseOperation -> Bool
+isEncode op =
+    case op of
+        Encode ->
+            True
+
+        _ ->
+            False
 
 
 view : Model -> Html Msg
 view model =
     div []
-        [ button [ onClick Decrement ] [ text "-" ]
-        , div [] [ text (String.fromInt model) ]
-        , button [ onClick Increment ] [ text "+" ]
+        [ div [ class "buttons has-addons" ]
+            [ button
+                [ onClick (ToggleOperation Encode)
+                , classList
+                    [ ( "is-success is-selected", isEncode model.operation )
+                    , ( "button", True )
+                    ]
+                ]
+                [ text "Encode" ]
+            , button
+                [ onClick (ToggleOperation Decode)
+                , classList
+                    [ ( "is-success is-selected", not (isEncode model.operation) )
+                    , ( "button", True )
+                    ]
+                ]
+                [ text "Decode" ]
+            ]
+        , div []
+            [ textarea [ onInput UpdateText, class "textarea" ] []
+            ]
+        , div [] [ p [] [ text (Morse.codeFromText model.text |> String.replace "\t" " | ") ] ]
         ]
