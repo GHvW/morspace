@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "serve": "npx parcel index.html"
+    "serve": "npx parcel index.html",
+    "test": "elm-test"
   },
   "devDependencies": {
     "@parcel/transformer-elm": "^2.9.3",
