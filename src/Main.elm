@@ -9,7 +9,12 @@ import Morse
 
 main : Program () Model Msg
 main =
-    Browser.sandbox { init = init, update = update, view = view }
+    Browser.element
+        { init = init
+        , update = update
+        , view = view
+        , subscriptions = subscriptions
+        }
 
 
 type MorseOperation
@@ -20,27 +25,47 @@ type MorseOperation
 type alias Model =
     { operation : MorseOperation
     , text : String
+    , copied : Bool
     }
 
 
 init : Model
 init =
-    { operation = Encode, text = "" }
+    { operation = Encode, text = "", copied = False }
 
 
 type Msg
     = ToggleOperation MorseOperation
     | UpdateText String
+    | PortReceive String
+    | PortSendText
 
 
-update : Msg -> Model -> Model
+update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         ToggleOperation op ->
-            { model | operation = op }
+            ( { model | operation = op }, Cmd.none )
 
         UpdateText it ->
-            { model | text = it }
+            ( { model | text = it, copied = False }, Cmd.none )
+
+        PortReceive message ->
+            ( { model | copied = message == "success" }, Cmd.none )
+
+        PortSendText ->
+            ( model, sendText (Morse.whitespaceFromText model.text) )
+
+
+port sendText : String -> Cmd msg
+
+
+port acknowledge : (String -> msg) -> Sub msg
+
+
+subscriptions : Model -> Sub Msg
+subscriptions _ =
+    acknowledge PortReceive
 
 
 isEncode : MorseOperation -> Bool
