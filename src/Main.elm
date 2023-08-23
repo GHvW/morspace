@@ -5,6 +5,9 @@ import Html exposing (Html, button, div, p, text, textarea)
 import Html.Attributes exposing (class, classList, disabled)
 import Html.Events exposing (onClick, onInput)
 import Morse
+import Platform exposing (ProcessId, Task)
+import Process
+import Task
 
 
 main : Program () Model Msg
@@ -39,6 +42,7 @@ type Msg
     | UpdateText String
     | PortReceive String
     | PortSendText
+    | RemoveCopied
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -51,10 +55,17 @@ update msg model =
             ( { model | text = it, copied = False }, Cmd.none )
 
         PortReceive message ->
-            ( { model | copied = message == "success" }, Cmd.none )
+            if message == "success" then
+                ( { model | copied = True }, Task.perform (\_ -> RemoveCopied) (Process.sleep 3000) )
+
+            else
+                ( model, Cmd.none )
 
         PortSendText ->
             ( model, sendText (Morse.codeFromText model.text) )
+
+        RemoveCopied ->
+            ( { model | copied = False }, Cmd.none )
 
 
 port sendText : String -> Cmd msg
@@ -104,4 +115,9 @@ view model =
             ]
         , div [] [ p [] [ text (Morse.codeFromText model.text |> String.replace "\t" " | ") ] ]
         , div [] [ button [ onClick PortSendText ] [ text "Copy it" ] ]
+        , if model.copied then
+            div [] [ p [] [ text "Copied!" ] ]
+
+          else
+            div [] []
         ]
