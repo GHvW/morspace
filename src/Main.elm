@@ -1,4 +1,4 @@
-module Main exposing (..)
+port module Main exposing (..)
 
 import Browser
 import Html exposing (Html, button, div, p, text, textarea)
@@ -29,9 +29,9 @@ type alias Model =
     }
 
 
-init : Model
-init =
-    { operation = Encode, text = "", copied = False }
+init : () -> ( Model, Cmd Msg )
+init () =
+    ( { operation = Encode, text = "", copied = False }, Cmd.none )
 
 
 type Msg
@@ -54,7 +54,7 @@ update msg model =
             ( { model | copied = message == "success" }, Cmd.none )
 
         PortSendText ->
-            ( model, sendText (Morse.whitespaceFromText model.text) )
+            ( model, sendText (Morse.codeFromText model.text) )
 
 
 port sendText : String -> Cmd msg
@@ -103,4 +103,5 @@ view model =
             [ textarea [ onInput UpdateText, class "textarea" ] []
             ]
         , div [] [ p [] [ text (Morse.codeFromText model.text |> String.replace "\t" " | ") ] ]
+        , div [] [ button [ onClick PortSendText ] [ text "Copy it" ] ]
         ]
