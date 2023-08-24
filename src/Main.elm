@@ -2,7 +2,7 @@ port module Main exposing (..)
 
 import Browser
 import Html exposing (Html, button, div, p, text, textarea)
-import Html.Attributes exposing (class, classList, disabled)
+import Html.Attributes exposing (class, classList, disabled, value)
 import Html.Events exposing (onClick, onInput)
 import Morse
 import Platform exposing (ProcessId, Task)
@@ -49,10 +49,10 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         ToggleOperation op ->
-            ( { model | operation = op }, Cmd.none )
+            ( { model | operation = op, text = "" }, Cmd.none )
 
         UpdateText it ->
-            ( { model | text = it, copied = False }, Cmd.none )
+            ( { model | text = it }, Cmd.none )
 
         PortReceive message ->
             if message == "success" then
@@ -111,9 +111,19 @@ view model =
                 [ text "Decode" ]
             ]
         , div []
-            [ textarea [ onInput UpdateText, class "textarea" ] []
+            [ textarea [ value model.text, onInput UpdateText, class "textarea" ] []
             ]
-        , div [] [ p [] [ text (Morse.codeFromText model.text |> String.replace "\t" " | ") ] ]
+        , div []
+            [ p []
+                [ text
+                    (if model.operation == Encode then
+                        Morse.codeFromText model.text |> String.replace "\t" " | "
+
+                     else
+                        Morse.codeToText model.text
+                    )
+                ]
+            ]
         , div [] [ button [ onClick PortSendText ] [ text "Copy it" ] ]
         , if model.copied then
             div [] [ p [] [ text "Copied!" ] ]
