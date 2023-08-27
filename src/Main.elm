@@ -20,9 +20,14 @@ main =
         }
 
 
+type MorseType
+    = Code
+    | Whitespace
+
+
 type MorseOperation
-    = Decode
-    | Encode
+    = Encode
+    | Decode MorseType
 
 
 type alias Model =
@@ -34,12 +39,12 @@ type alias Model =
 
 init : () -> ( Model, Cmd Msg )
 init () =
-    ( { operation = Encode, text = "", copied = False }, Cmd.none )
-
-
-type MorseType
-    = Code
-    | Whitespace
+    ( { operation = Encode
+      , text = ""
+      , copied = False
+      }
+    , Cmd.none
+    )
 
 
 type Msg
@@ -91,14 +96,36 @@ subscriptions _ =
     acknowledge PortReceive
 
 
-isEncode : MorseOperation -> Bool
-isEncode op =
-    case op of
-        Encode ->
-            True
+isOpSelected : MorseOperation -> Model -> Bool
+isOpSelected op model =
+    op == model.operation
 
-        _ ->
-            False
+
+isEncode =
+    isOpSelected Encode
+
+
+isDecodeWhitespace =
+    isOpSelected (Decode Whitespace)
+
+
+isDecodeCode =
+    isOpSelected (Decode Code)
+
+
+textConversionToRender : MorseOperation -> String -> String
+textConversionToRender operation input =
+    case operation of
+        Encode ->
+            Morse.codeFromText input |> String.replace "\t" " | "
+
+        Decode t ->
+            case t of
+                Code ->
+                    Morse.codeToText input
+
+                Whitespace ->
+                    Morse.whitespaceToText input
 
 
 view : Model -> Html Msg
@@ -108,19 +135,27 @@ view model =
             [ button
                 [ onClick (ToggleOperation Encode)
                 , classList
-                    [ ( "is-success is-selected", isEncode model.operation )
+                    [ ( "is-success is-selected", isEncode model )
                     , ( "button", True )
                     ]
                 ]
                 [ text "Encode" ]
             , button
-                [ onClick (ToggleOperation Decode)
+                [ onClick (ToggleOperation (Decode Whitespace))
                 , classList
-                    [ ( "is-success is-selected", not (isEncode model.operation) )
+                    [ ( "is-success is-selected", isDecodeWhitespace model )
                     , ( "button", True )
                     ]
                 ]
-                [ text "Decode" ]
+                [ text "Decode Whitespace" ]
+            , button
+                [ onClick (ToggleOperation (Decode Code))
+                , classList
+                    [ ( "is-success is-selected", isDecodeCode model )
+                    , ( "button", True )
+                    ]
+                ]
+                [ text "Decode Morse Code" ]
             ]
         , div [ id "input-container" ]
             [ textarea
@@ -136,12 +171,7 @@ view model =
         , div []
             [ p []
                 [ text
-                    (if model.operation == Encode then
-                        Morse.codeFromText model.text |> String.replace "\t" " | "
-
-                     else
-                        Morse.codeToText model.text
-                    )
+                    (textConversionToRender model.operation model.text)
                 ]
             ]
         , div []
