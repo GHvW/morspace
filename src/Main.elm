@@ -2,7 +2,7 @@ port module Main exposing (..)
 
 import Browser
 import Html exposing (Html, button, div, p, text, textarea)
-import Html.Attributes exposing (class, classList, disabled, value)
+import Html.Attributes exposing (attribute, class, classList, disabled, id, value)
 import Html.Events exposing (onClick, onInput)
 import Morse
 import Platform exposing (ProcessId, Task)
@@ -37,11 +37,16 @@ init () =
     ( { operation = Encode, text = "", copied = False }, Cmd.none )
 
 
+type MorseType
+    = Code
+    | Whitespace
+
+
 type Msg
     = ToggleOperation MorseOperation
     | UpdateText String
     | PortReceive String
-    | PortSendText
+    | PortSendText MorseType
     | RemoveCopied
 
 
@@ -61,8 +66,15 @@ update msg model =
             else
                 ( model, Cmd.none )
 
-        PortSendText ->
-            ( model, sendText (Morse.codeFromText model.text) )
+        PortSendText t ->
+            ( model
+            , case t of
+                Code ->
+                    sendText (Morse.codeFromText model.text)
+
+                Whitespace ->
+                    sendText (Morse.whitespaceFromText model.text)
+            )
 
         RemoveCopied ->
             ( { model | copied = False }, Cmd.none )
@@ -110,8 +122,16 @@ view model =
                 ]
                 [ text "Decode" ]
             ]
-        , div []
-            [ textarea [ value model.text, onInput UpdateText, class "textarea" ] []
+        , div [ id "input-container" ]
+            [ textarea
+                [ id "input-textarea"
+                , value model.text
+                , onInput UpdateText
+
+                -- , class "textarea"
+                -- , attribute "cols" "10"
+                ]
+                []
             ]
         , div []
             [ p []
@@ -124,10 +144,13 @@ view model =
                     )
                 ]
             ]
-        , div [] [ button [ onClick PortSendText ] [ text "Copy it" ] ]
-        , if model.copied then
-            div [] [ p [] [ text "Copied!" ] ]
+        , div []
+            [ button [ onClick (PortSendText Code) ] [ text "Copy Morse Code" ]
+            , button [ onClick (PortSendText Whitespace) ] [ text "Copy Whitespace" ]
+            , if model.copied then
+                div [] [ p [] [ text "Copied!" ] ]
 
-          else
-            div [] []
+              else
+                div [] []
+            ]
         ]
