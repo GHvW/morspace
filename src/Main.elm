@@ -131,33 +131,7 @@ textConversionToRender operation input =
 view : Model -> Html Msg
 view model =
     div []
-        [ div [ id "encode-decde-select" ]
-            [ button
-                [ onClick (ToggleOperation Encode)
-                , classList
-                    [ ( "is-success is-selected", isEncode model )
-                    , ( "button", True )
-                    ]
-                ]
-                [ text "Encode" ]
-            , button
-                [ onClick (ToggleOperation (Decode Whitespace))
-                , classList
-                    [ ( "is-success is-selected", isDecodeWhitespace model )
-                    , ( "button", True )
-                    ]
-                ]
-                [ text "Decode Whitespace" ]
-            , button
-                [ onClick (ToggleOperation (Decode Code))
-                , classList
-                    [ ( "is-success is-selected", isDecodeCode model )
-                    , ( "button", True )
-                    ]
-                ]
-                [ text "Decode Morse Code" ]
-            ]
-        , div [ id "main-container" ]
+        [ div [ id "main-container" ]
             [ div [ id "encode-decode-slect" ]
                 [ button
                     [ onClick (ToggleOperation Encode)
