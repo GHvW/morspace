@@ -131,7 +131,7 @@ textConversionToRender operation input =
 view : Model -> Html Msg
 view model =
     div []
-        [ div [ class "buttons has-addons" ]
+        [ div [ id "encode-decde-select" ]
             [ button
                 [ onClick (ToggleOperation Encode)
                 , classList
@@ -157,21 +157,50 @@ view model =
                 ]
                 [ text "Decode Morse Code" ]
             ]
-        , div [ id "input-container" ]
-            [ textarea
-                [ id "input-textarea"
-                , value model.text
-                , onInput UpdateText
-
-                -- , class "textarea"
-                -- , attribute "cols" "10"
+        , div [ id "main-container" ]
+            [ div [ id "encode-decode-slect" ]
+                [ button
+                    [ onClick (ToggleOperation Encode)
+                    , classList
+                        [ ( "is-success is-selected", isEncode model )
+                        , ( "button", True )
+                        ]
+                    ]
+                    [ text "Encode" ]
+                , button
+                    [ onClick (ToggleOperation (Decode Whitespace))
+                    , classList
+                        [ ( "is-success is-selected", isDecodeWhitespace model )
+                        , ( "button", True )
+                        ]
+                    ]
+                    [ text "Decode Whitespace" ]
+                , button
+                    [ onClick (ToggleOperation (Decode Code))
+                    , classList
+                        [ ( "is-success is-selected", isDecodeCode model )
+                        , ( "button", True )
+                        ]
+                    ]
+                    [ text "Decode Morse Code" ]
                 ]
-                []
-            ]
-        , div []
-            [ p []
-                [ text
-                    (textConversionToRender model.operation model.text)
+            , div [ id "input-container" ]
+                [ textarea
+                    [ id "input-textarea"
+                    , value model.text
+                    , onInput UpdateText
+                    , class "textarea"
+
+                    -- , attribute "cols" "10"
+                    , attribute "rows" "12"
+                    ]
+                    []
+                , div []
+                    [ p []
+                        [ text
+                            (textConversionToRender model.operation model.text)
+                        ]
+                    ]
                 ]
             ]
         , div []
