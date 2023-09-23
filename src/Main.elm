@@ -1,7 +1,7 @@
 port module Main exposing (..)
 
 import Browser
-import Html exposing (Html, button, div, p, text, textarea)
+import Html exposing (Html, button, div, h1, p, text, textarea)
 import Html.Attributes exposing (attribute, class, classList, disabled, id, value)
 import Html.Events exposing (onClick, onInput)
 import Morse
@@ -132,7 +132,18 @@ view : Model -> Html Msg
 view model =
     div []
         [ div [ id "main-container" ]
-            [ div [ id "encode-decode-slect" ]
+            [ h1 [ id "title", class "is-size-1" ] [ text "Morespace" ]
+            , textarea
+                [ id "input-textarea"
+                , value model.text
+                , onInput UpdateText
+                , class "is-size-4"
+
+                -- , attribute "cols" "10"
+                , attribute "rows" "12"
+                ]
+                []
+            , div [ id "encode-decode-select" ]
                 [ button
                     [ onClick (ToggleOperation Encode)
                     , classList
@@ -158,32 +169,20 @@ view model =
                     ]
                     [ text "Decode Morse Code" ]
                 ]
-            , div [ id "input-container" ]
-                [ textarea
-                    [ id "input-textarea"
-                    , value model.text
-                    , onInput UpdateText
-                    , class "textarea"
-
-                    -- , attribute "cols" "10"
-                    , attribute "rows" "12"
-                    ]
-                    []
-                , div []
-                    [ p []
-                        [ text
-                            (textConversionToRender model.operation model.text)
-                        ]
+            , div [ id "converted-text" ]
+                [ p [ class "is-size-4" ]
+                    [ text
+                        (textConversionToRender model.operation model.text)
                     ]
                 ]
-            ]
-        , div []
-            [ button [ onClick (PortSendText Code) ] [ text "Copy Morse Code" ]
-            , button [ onClick (PortSendText Whitespace) ] [ text "Copy Whitespace" ]
-            , if model.copied then
-                div [] [ p [] [ text "Copied!" ] ]
+            , div [ id "copy-encoded-buttons" ]
+                [ button [ onClick (PortSendText Code), class "button" ] [ text "Copy Morse Code" ]
+                , button [ onClick (PortSendText Whitespace), class "button" ] [ text "Copy Whitespace" ]
+                , if model.copied then
+                    div [] [ p [] [ text "Copied!" ] ]
 
-              else
-                div [] []
+                  else
+                    div [] []
+                ]
             ]
         ]
