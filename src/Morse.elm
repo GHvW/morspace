@@ -52,7 +52,9 @@ fromText ( morseInfo, convert ) =
     let
         wordToMorse : String -> String
         wordToMorse =
-            String.toList >> List.map convert >> String.join morseInfo.letterSeparator
+            String.toList
+                >> List.map convert
+                >> String.join morseInfo.letterSeparator
     in
     String.words
         >> List.map wordToMorse
