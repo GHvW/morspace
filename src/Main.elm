@@ -131,18 +131,8 @@ textConversionToRender operation input =
 view : Model -> Html Msg
 view model =
     div []
-        [ div [ id "main-container" ]
-            [ h1 [ id "title", class "is-size-1" ] [ text "Morespace" ]
-            , textarea
-                [ id "input-textarea"
-                , value model.text
-                , onInput UpdateText
-                , class "is-size-4"
-
-                -- , attribute "cols" "10"
-                , attribute "rows" "12"
-                ]
-                []
+        [ div [ id "main-container", class "mx-6" ]
+            [ h1 [ id "title", class "is-size-2" ] [ text "Morespace" ]
             , div [ id "encode-decode-select" ]
                 [ button
                     [ onClick (ToggleOperation Encode)
@@ -169,6 +159,16 @@ view model =
                     ]
                     [ text "Decode Morse Code" ]
                 ]
+            , textarea
+                [ id "input-textarea"
+                , value model.text
+                , onInput UpdateText
+                , class "is-size-4 textarea"
+
+                -- , attribute "cols" "10"
+                , attribute "rows" "12"
+                ]
+                []
             , div [ id "converted-text" ]
                 [ p [ class "is-size-4" ]
                     [ text
