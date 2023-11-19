@@ -133,7 +133,7 @@ view model =
     div []
         [ div [ id "main-container", class "mx-6" ]
             [ div [ id "top-bar-thing" ]
-                [ h1 [ id "title", class "is-size-3" ] [ text "Morespace" ]
+                [ h1 [ id "title", class "is-size-3" ] [ text "MORSPACE" ]
                 , div [ id "encode-decode-select" ]
                     [ button
                         [ onClick (ToggleOperation Encode)
