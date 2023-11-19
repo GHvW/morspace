@@ -132,32 +132,34 @@ view : Model -> Html Msg
 view model =
     div []
         [ div [ id "main-container", class "mx-6" ]
-            [ h1 [ id "title", class "is-size-2" ] [ text "Morespace" ]
-            , div [ id "encode-decode-select" ]
-                [ button
-                    [ onClick (ToggleOperation Encode)
-                    , classList
-                        [ ( "is-success is-selected", isEncode model )
-                        , ( "button", True )
+            [ div [ id "top-bar-thing" ]
+                [ h1 [ id "title", class "is-size-3" ] [ text "Morespace" ]
+                , div [ id "encode-decode-select" ]
+                    [ button
+                        [ onClick (ToggleOperation Encode)
+                        , classList
+                            [ ( "is-success is-selected", isEncode model )
+                            , ( "button", True )
+                            ]
                         ]
-                    ]
-                    [ text "Encode" ]
-                , button
-                    [ onClick (ToggleOperation (Decode Whitespace))
-                    , classList
-                        [ ( "is-success is-selected", isDecodeWhitespace model )
-                        , ( "button", True )
+                        [ text "Encode" ]
+                    , button
+                        [ onClick (ToggleOperation (Decode Whitespace))
+                        , classList
+                            [ ( "is-success is-selected", isDecodeWhitespace model )
+                            , ( "button", True )
+                            ]
                         ]
-                    ]
-                    [ text "Decode Whitespace" ]
-                , button
-                    [ onClick (ToggleOperation (Decode Code))
-                    , classList
-                        [ ( "is-success is-selected", isDecodeCode model )
-                        , ( "button", True )
+                        [ text "Decode Whitespace" ]
+                    , button
+                        [ onClick (ToggleOperation (Decode Code))
+                        , classList
+                            [ ( "is-success is-selected", isDecodeCode model )
+                            , ( "button", True )
+                            ]
                         ]
+                        [ text "Decode Morse Code" ]
                     ]
-                    [ text "Decode Morse Code" ]
                 ]
             , textarea
                 [ id "input-textarea"
@@ -169,20 +171,20 @@ view model =
                 , attribute "rows" "12"
                 ]
                 []
+            , div [ id "copy-encoded-buttons" ]
+                [ if model.copied then
+                    div [] [ p [] [ text "Copied!" ] ]
+
+                  else
+                    div [] []
+                , button [ onClick (PortSendText Code), class "button" ] [ text "Copy Morse Code" ]
+                , button [ onClick (PortSendText Whitespace), class "button" ] [ text "Copy Whitespace" ]
+                ]
             , div [ id "converted-text" ]
                 [ p [ class "is-size-4" ]
                     [ text
                         (textConversionToRender model.operation model.text)
                     ]
-                ]
-            , div [ id "copy-encoded-buttons" ]
-                [ button [ onClick (PortSendText Code), class "button" ] [ text "Copy Morse Code" ]
-                , button [ onClick (PortSendText Whitespace), class "button" ] [ text "Copy Whitespace" ]
-                , if model.copied then
-                    div [] [ p [] [ text "Copied!" ] ]
-
-                  else
-                    div [] []
                 ]
             ]
         ]
