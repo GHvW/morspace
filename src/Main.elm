@@ -138,7 +138,7 @@ view model =
                     [ button
                         [ onClick (ToggleOperation Encode)
                         , classList
-                            [ ( "is-success is-selected", isEncode model )
+                            [ ( "is-dark is-selected", isEncode model )
                             , ( "button", True )
                             ]
                         ]
@@ -146,7 +146,7 @@ view model =
                     , button
                         [ onClick (ToggleOperation (Decode Whitespace))
                         , classList
-                            [ ( "is-success is-selected", isDecodeWhitespace model )
+                            [ ( "is-dark is-selected", isDecodeWhitespace model )
                             , ( "button", True )
                             ]
                         ]
@@ -154,7 +154,7 @@ view model =
                     , button
                         [ onClick (ToggleOperation (Decode Code))
                         , classList
-                            [ ( "is-success is-selected", isDecodeCode model )
+                            [ ( "is-dark is-selected", isDecodeCode model )
                             , ( "button", True )
                             ]
                         ]

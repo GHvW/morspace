@@ -1,5 +1,6 @@
 {
   "scripts": {
+    "build": "npx parcel build index.html",
     "serve": "npx parcel index.html",
     "test": "elm-test"
   },

@@ -33,6 +33,14 @@
     gap: 1rem;
 }
 
+@media (max-width: 768px) {
+
+    /* Adjust the min-width as needed for your design */
+    /* #encode-decode-select {
+        flex-direction: column;
+    } */
+}
+
 
 #input-textarea {
     margin-bottom: 0.75rem;
